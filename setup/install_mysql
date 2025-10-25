@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# Additional Notes:
+# The script creates a database named vnpydbinstead of nvpydb
+# All privileges are granted specifically for the vnpydbdatabase
+# The UTF8MB4 character set ensures full Unicode support
+# Timezone is set to Shanghai time (UTC+8)
+# For production use, I strongly recommend: sing a stronger password than "1"
+# Changing the root password to something more secure
+# Setting up regular database backups
+# Enabling MySQL binary logging for point-in-time recovery
+
+# Check for root privileges
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run this script with sudo."
+    exit 1
+fi
+
+apt update
+apt install -y mysql-server
+
+# Install MySQL non-interactively
+debconf-set-selections <<< 'mysql-server mysql-server/root_password password temporary_root_password'
+debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password temporary_root_password'
+apt-get update
+apt-get -y install mysql-server
+
+# Secure MySQL installation non-interactively
+mysql --user=root --password=temporary_root_password <<EOF
+DELETE FROM mysql.user WHERE User='';
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+DROP DATABASE IF EXISTS test;
+DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'new_strong_root_password';
+FLUSH PRIVILEGES;
+EOF
+
+# Create vnpydb database and user
+sudo mysql --user=root --password=new_strong_root_password <<EOF
+CREATE DATABASE IF NOT EXISTS vnpydb;
+CREATE USER "$SUDO_USER"@'localhost' IDENTIFIED WITH mysql_native_password BY '1';    # <-- HERE set password 1 for dev
+GRANT ALL PRIVILEGES ON vnpydb.* TO "$SUDO_USER"@'localhost';
+FLUSH PRIVILEGES;
+EOF
+
+# Configure MySQL
+sudo tee -a /etc/mysql/mysql.conf.d/mysqld.cnf > /dev/null <<EOF
+[mysqld]
+default-time-zone = '+08:00'
+character-set-server = utf8mb4
+collation-server = utf8mb4_unicode_ci
+EOF
+
+# Restart MySQL
+systemctl restart mysql
+
+# Test MySQL
+mysql -u "$SUDO_USER" -p1 -e "SHOW DATABASES;"
+
+# Install Python MySQL client
+#apt-get -y install libmysqlclient-dev python3-dev
+#pip install mysqlclient
+
+echo "MySQL installed successfully with vnpydb database!"
