@@ -1,0 +1,16 @@
+#!/bin/bash
+
+source ~/miniconda3/bin/activate
+pip install vnpy_ctp
+
+pip install vnpy_datamanager
+pip install vnpy_tushare
+
+pip install vnpy_sqlite
+pip install vnpy_mysql
+
+pip install vnpy_ctastrategy
+pip install vnpy_paperaccount
+pip install vnpy_ctabacktester
+
+pip install vnpy_chartwizard

@@ -11,10 +11,14 @@ fi
 
 sudo -u "$SUDO_USER" ./install_miniconda_clone_vnpy
 
-cd /home/$SUDO_USER/vnpy
+pushd /home/$SUDO_USER/vnpy
 bash install.sh "/home/$SUDO_USER/miniconda3/bin/python"  "https://pypi.vnpy.com"
+popd
 
-sudo -u "$SUDO_USER" ./install_vnpy_packages
+sudo -u "$SUDO_USER" ./install_vnpackages
+
+# Optionally we can install the mysql server
+#./install_mysql
 
 echo "Setup Done."
 echo "Next please run: python run.py to start the vnpy GuiAPP"
