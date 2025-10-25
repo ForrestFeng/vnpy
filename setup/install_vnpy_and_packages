@@ -1,0 +1,7 @@
+#!/bin/bash
+
+source ~/miniconda3/bin/activate
+pip install vnpy_ctp
+pip install vnpy_ctastrategy
+pip install vnpy_ctabacktester
+pip install vnpy_sqlite

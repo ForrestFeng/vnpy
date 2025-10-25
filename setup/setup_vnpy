@@ -1,0 +1,20 @@
+#!/bin/bash
+
+
+# Check for root privileges
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run this script with sudo."
+    exit 1
+fi
+
+./install_dependency
+
+sudo -u "$SUDO_USER" ./install_miniconda_clone_vnpy
+
+cd /home/$SUDO_USER/vnpy
+bash install.sh "/home/$SUDO_USER/miniconda3/bin/python"  "https://pypi.vnpy.com"
+
+sudo -u "$SUDO_USER" ./install_vnpy_packages
+
+echo "Setup Done."
+echo "Next please run: python run.py to start the vnpy GuiAPP"

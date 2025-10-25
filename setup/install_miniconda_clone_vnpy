@@ -1,0 +1,32 @@
+#!/bin/bash 
+
+
+## Install mini conda silently
+### https://www.anaconda.com/docs/getting-started/miniconda/install#linux-2
+mkdir -p ~/miniconda3
+wget https://repo.anaconda.com/miniconda/Miniconda3-py313_25.7.0-2-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+rm ~/miniconda3/miniconda.sh
+
+# activate miniconda base env
+source ~/miniconda3/bin/activate
+###  initialize conda on all available shells 
+conda init --all bash
+conda --version
+
+# config the pip to use tsinghua source to speedup downloading
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple/
+pip config set install.trusted-host pypi.tuna.tsinghua.edu.cn
+
+# install new libstdcxx-ng which is required by vnpy_ctp package.
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+conda install -y -c conda-forge libstdcxx-ng 
+
+
+# Git Clone specific release tag 4.1.0
+cd ~
+## shadow copy with tag 
+git clone --depth 1 --branch 4.1.0 https://github.com/vnpy/vnpy.git
+cd vnpy
+sed -i 's/^\([[:space:]]*\)\(\$python -m pip install\)/\1sudo -u "$SUDO_USER" \2/' install.sh
