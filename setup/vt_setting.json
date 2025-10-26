@@ -1,0 +1,27 @@
+{
+    "font.family": "微软雅黑",
+    "font.size": 12,
+    "log.active": true,
+    "log.level": "CRITICAL",
+    "log.console": true,
+    "log.file": true,
+    
+    "email.server": "smtp.qq.com",
+    "email.port": 465,
+    "email.username": "",
+    "email.password": "",
+    "email.sender": "",
+    "email.receiver": "",
+    
+    "datafeed.name": "tushare",
+    "datafeed.username": "your_name",
+    "datafeed.password": "your_token",
+    
+    "database.name": "mysql",
+    "database.database": "vnpydb",
+    "database.host": "localhost",
+    "database.port": 3306,
+    "database.user": "user_name",
+    "database.password": "password",
+    "database.timezone": "Asia/Shanghai"
+}
